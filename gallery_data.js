@@ -145,3 +145,4 @@
   { src: "gallery//Close_up_shot_202603181159.png", type: "image", folder: "main" },
 ];
 
+
