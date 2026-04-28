@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Дорожная карта к успеху · @makars</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;
+  --surface:#111118;
+  --surface2:#16161f;
+  --border:rgba(255,255,255,.07);
+  --border2:rgba(255,255,255,.12);
+  --text:#e8e8f0;
+  --muted:rgba(232,232,240,.4);
+  --muted2:rgba(232,232,240,.25);
+  --blue:#4f8ef7;
+  --purple:#8b5cf6;
+  --green:#34d399;
+  --pink:#f472b6;
+  --g1:linear-gradient(135deg,#4f8ef7,#8b5cf6);
+  --g2:linear-gradient(135deg,#34d399,#4f8ef7);
+  --radius:16px;
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(79,142,247,.3);border-radius:4px}
+
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  padding:0 0 80px;
+}
+
+/* HEADER */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,10,15,.85);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  padding:20px 24px;
+}
+.header-inner{max-width:760px;margin:0 auto}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.logo{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.logo span{background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.reset-btn{
+  font-size:11px;font-weight:600;color:var(--muted2);
+  background:none;border:1px solid var(--border);
+  padding:6px 14px;border-radius:100px;cursor:pointer;
+  transition:.2s;font-family:inherit;
+}
+.reset-btn:hover{border-color:rgba(244,114,182,.3);color:var(--pink)}
+
+/* PROGRESS */
+.prog-wrap{display:flex;align-items:center;gap:12px}
+.prog-bar{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--g1);border-radius:3px;transition:width .5s cubic-bezier(.22,1,.36,1)}
+.prog-text{font-size:12px;font-weight:700;color:var(--blue);white-space:nowrap;min-width:60px;text-align:right}
+.prog-count{font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* STAGE BADGE */
+.stage-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 16px;border-radius:100px;
+  font-size:11px;font-weight:700;letter-spacing:.08em;
+  margin-top:10px;
+  transition:.4s;
+}
+.stage-badge.s0{background:rgba(232,232,240,.05);color:var(--muted);border:1px solid var(--border)}
+.stage-badge.s1{background:rgba(79,142,247,.1);color:var(--blue);border:1px solid rgba(79,142,247,.25)}
+.stage-badge.s2{background:rgba(139,92,246,.1);color:var(--purple);border:1px solid rgba(139,92,246,.25)}
+.stage-badge.s3{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.25)}
+.stage-badge.s4{background:linear-gradient(135deg,rgba(52,211,153,.15),rgba(79,142,247,.15));color:var(--green);border:1px solid rgba(52,211,153,.4)}
+
+/* MAIN */
+.main{max-width:760px;margin:0 auto;padding:32px 24px 0}
+
+/* CHAPTER */
+.chapter{margin-bottom:10px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.chapter-header{
+  display:flex;align-items:center;gap:12px;
+  padding:16px 20px;cursor:pointer;
+  background:var(--surface);
+  transition:background .2s;
+  user-select:none;
+}
+.chapter-header:hover{background:var(--surface2)}
+.chapter-num{
+  width:28px;height:28px;border-radius:8px;
+  background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:var(--blue);
+  flex-shrink:0;
+}
+.chapter-num.done-num{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.25);color:var(--green)}
+.chapter-title{flex:1;font-size:14px;font-weight:600;letter-spacing:-.01em}
+.chapter-prog{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap}
+.chapter-arrow{font-size:10px;color:var(--muted2);transition:transform .25s;flex-shrink:0}
+.chapter.open .chapter-arrow{transform:rotate(180deg)}
+
+/* MINI PROGRESS BAR */
+.chapter-bar{height:2px;background:rgba(255,255,255,.04)}
+.chapter-bar-fill{height:100%;background:var(--g1);transition:width .4s cubic-bezier(.22,1,.36,1)}
+
+/* CHAPTER BODY */
+.chapter-body{display:none}
+.chapter.open .chapter-body{display:block}
+
+/* SECTION */
+.section{padding:4px 0}
+.section-title{
+  padding:10px 20px 6px;
+  font-size:10px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--muted2);
+}
+
+/* TASK ITEM */
+.task{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 20px;
+  transition:background .15s;
+  cursor:pointer;
+}
+.task:hover{background:rgba(255,255,255,.025)}
+.task:hover .task-cb{border-color:rgba(79,142,247,.6)}
+
+.task-cb{
+  width:18px;height:18px;border-radius:5px;
+  border:1.5px solid var(--border2);
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:.2s;background:transparent;
+}
+.task-cb .check{
+  font-size:10px;color:var(--bg);
+  opacity:0;transform:scale(.5);transition:.2s;
+}
+.task.done .task-cb{background:var(--green);border-color:var(--green)}
+.task.done .task-cb .check{opacity:1;transform:scale(1)}
+.task-label{
+  font-size:13px;color:var(--text);transition:color .2s;
+  line-height:1.4;
+}
+.task.done .task-label{
+  color:var(--muted2);
+  text-decoration:line-through;
+  text-decoration-color:rgba(52,211,153,.4);
+}
+
+/* SUCCESS STATE */
+.chapter-header.all-done .chapter-title{color:var(--green)}
+.chapter-header.all-done .chapter-num{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);color:var(--green)}
+
+/* LEVEL UNLOCK */
+.level-card{
+  margin:24px 0;padding:22px 24px;
+  border-radius:var(--radius);
+  background:rgba(52,211,153,.05);
+  border:1px solid rgba(52,211,153,.2);
+  display:flex;align-items:center;gap:14px;
+}
+.level-ico{font-size:28px;flex-shrink:0}
+.level-t{font-size:14px;font-weight:700;color:var(--green);margin-bottom:3px}
+.level-d{font-size:12px;color:rgba(52,211,153,.6)}
+
+/* FINAL UNLOCK */
+.final-card{
+  margin:40px 0 0;padding:40px;
+  border-radius:24px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(79,142,247,.1),rgba(139,92,246,.06),transparent 70%);
+  border:1px solid rgba(79,142,247,.2);
+  text-align:center;
+  display:none;
+}
+.final-card.show{display:block;animation:popIn .6s cubic-bezier(.22,1,.36,1) both}
+@keyframes popIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+.final-ico{font-size:56px;margin-bottom:16px;display:block;animation:spin 3s linear infinite}
+@keyframes spin{0%,100%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(40deg)}}
+.final-t{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px;background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.final-d{font-size:14px;color:var(--muted);line-height:1.7;max-width:400px;margin:0 auto}
+
+/* CONFETTI */
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+.confetti-wrap .dot{position:absolute;width:6px;height:6px;border-radius:50%;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+@media(max-width:600px){
+  .header,.main{padding-left:16px;padding-right:16px}
+  .chapter-header,.task,.section-title{padding-left:14px;padding-right:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="logo"><span>@makars</span> · Дорожная карта</div>
+      <button class="reset-btn" onclick="resetAll()">Сбросить</button>
+    </div>
+    <div class="prog-wrap">
+      <span class="prog-count" id="prog-count">0 / 0</span>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <span class="prog-text" id="prog-text">0%</span>
+    </div>
+    <div class="stage-badge s0" id="stage-badge">🚀 Начало пути</div>
+  </div>
+</div>
+
+<div class="main" id="main">
+
+<div id="chapters"></div>
+
+<div class="final-card" id="final-card">
+  <span class="final-ico">🏆</span>
+  <div class="final-t">Финальный уровень разблокирован</div>
+  <div class="final-d">Ты прошёл все этапы. Просмотры создали охват — охват создал доверие — доверие создало деньги. Это больше не дорожная карта. Это твоя система.</div>
+</div>
+
+</div>
+
+<div class="confetti-wrap" id="confetti"></div>
+
+<script>
+const data = [
+  {id:1, title:"Упаковка бренда", sections:[
+    {title:"Позиционирование", tasks:["Определить роль: AI automotive creator","Сформулировать ценность: вирусные автомобильные видео + премиальная аудитория","Зафиксировать основные рынки: США, Европа, Россия/СНГ","Зафиксировать аудиторию: мужчины 18-45, автоэнтузиасты, тюнинг, суперкары, технологии"]},
+    {title:"Оформление профиля", tasks:["Обновить bio: кто ты, что делаешь, CTA для брендов","Добавить рабочий email","Закрепить 3 лучших reels","Сделать highlights: About, Stats, Brands, Contact","Привести аватар и стиль профиля к одному виду"]},
+    {title:"Материалы для продаж", tasks:["Финализировать media kit","Подготовить rate card","Сделать короткий brand pitch","Подготовить шаблон email для брендов","Подготовить шаблон DM","Подготовить шаблон follow-up"]},
+    {title:"Инфраструктура", tasks:["Создать отдельную почту для рекламы и партнерств","Создать папку в Google Drive / Notion","Создать CRM-таблицу по брендам и агентствам","Разделить папки: Media Kit, Analytics, Brand Deals, Affiliate, Case Studies"]}
+  ]},
+  {id:2, title:"База монетизации", sections:[
+    {title:"Affiliate-система", tasks:["Подключить FINN","Подключить Discover Cars","Подключить Thinkcar","Подключить еще 2-3 авто-партнерки","Собрать link-in-bio страницу","Разделить ссылки по категориям: Car Deals, Rentals, Accessories, Diagnostics","Добавить трекинг и UTM-метки"]},
+    {title:"Система brand deals", tasks:["Поставить цену на Reel","Поставить цену на пакет Stories","Поставить цену на Bundle: Reel + Stories","Поставить цену на Monthly Ambassador","Добавить performance-бонусы: за просмотры, клики, продажи"]},
+    {title:"Performance-модель", tasks:["Подготовить оффер: фикс + бонус за 1000 просмотров","Подготовить оффер: affiliate-only","Подготовить оффер: hybrid model (фикс + CPA)","Подготовить короткое объяснение для брендов, как работает performance-сотрудничество"]}
+  ]},
+  {id:3, title:"Выход на платформы", sections:[
+    {title:"Linqia", tasks:["Заполнить creator application","Добавить Instagram-профиль и метрики","Прикрепить media kit","Подсветить 70M views / 90 days","Подсветить аудиторию США и Европы","Сделать follow-up через 7-10 дней"]},
+    {title:"Open Influence", tasks:["Зарегистрироваться как creator","Заполнить профиль и статистику","Прикрепить media kit","Отправить прямой email-питч","Сделать follow-up через 7 дней"]},
+    {title:"Performance Collab", tasks:["Зарегистрироваться как creator","Позиционировать себя как performance-ready creator","Предложить оплату по просмотрам","Показать охваты и ожидаемую CPM-модель","Сделать follow-up после регистрации"]},
+    {title:"Дополнительные сети", tasks:["Зарегистрироваться в Impact","Зарегистрироваться в ShareASale","Зарегистрироваться в CJ Affiliate","Зарегистрироваться в Amazon Influencer Program"]}
+  ]},
+  {id:4, title:"Машина продаж", sections:[
+    {title:"База контактов", tasks:["Собрать 100 автомобильных брендов","Собрать 30 автомобильных агентств","Собрать 20 creator/platform сервисов","Разделить контакты по рынкам: USA, Europe, Russia/CIS"]},
+    {title:"Еженедельный аутрич", tasks:["Отправлять 20 cold emails в неделю","Отправлять 10 агентских питчей в неделю","Отправлять 5 platform applications в неделю","Делать первый follow-up через 4-7 дней","Делать второй follow-up через 7-10 дней","Переносить молчащие лиды в список reactivation"]},
+    {title:"Структура питча", tasks:["Коротко представить себя","Назвать нишу и аудиторию","Показать 70M views за 90 дней","Подчеркнуть гео: USA + Europe","Предложить варианты сотрудничества","Прикрепить media kit","Дать понятный CTA"]}
+  ]},
+  {id:5, title:"Контент-машина", sections:[
+    {title:"Типы контента", tasks:["Viral content для охвата","Trust content для доверия","Monetization content для конверсии"]},
+    {title:"Viral content", tasks:["Supercar concepts","AI cinematic transformations","Future car edits","Tuning inspiration reels","Короткие ролики с сильным hook"]},
+    {title:"Trust content", tasks:["Top car gadgets","Best accessories for drivers","Car tool recommendations","Visual comparisons","Обзоры трендов в авто-нише"]},
+    {title:"Monetization content", tasks:["Reels с интеграцией продукта","Серии stories с CTA","Продвижение link-in-bio","Объяснение affiliate-офферов","Showcase-видео под бренды"]},
+    {title:"Формула публикаций", tasks:["70% контент на охват","20% контент на доверие","10% контент на деньги","Тестировать 3 новых hook каждую неделю","Тестировать 2 CTA каждую неделю"]}
+  ]},
+  {id:6, title:"Этап первых денег", sections:[
+    {title:"Цель первых 30 дней", tasks:["Получить первые affiliate-клики","Получить первые affiliate-конверсии","Получить первое оплачиваемое размещение в stories","Получить первую оплаченную интеграцию в reel"]},
+    {title:"Цель первых 60 дней", tasks:["Закрыть 3-5 оплаченных brand deals","Получить стабильный affiliate-доход","Собрать 2 case studies со скринами","Получить 1-2 отзыва от клиентов"]},
+    {title:"Цель первых 90 дней", tasks:["Закрыть 1 monthly ambassador deal","Создать повторяющиеся партнерства","Увеличить средний чек","Поднять цены на 20-30%"]}
+  ]},
+  {id:7, title:"Аналитика и усиление", sections:[
+    {title:"Еженедельный разбор", tasks:["Считать views","Считать shares","Считать saves","Считать profile visits","Считать link clicks","Считать конверсии по каждому офферу"]},
+    {title:"Ежемесячный разбор", tasks:["Обновлять media kit свежими цифрами","Убирать слабые офферы","Обновлять rate card при росте спроса","Сохранять лучшие ролики в portfolio","Определять страны с лучшей конверсией"]},
+    {title:"Правила принятия решений", tasks:["Масштабировать то, что дает views и clicks","Убирать то, что дает охват без денег","Поднимать цены после каждого сильного кейса","Усиливать лучшую категорию офферов"]}
+  ]},
+  {id:8, title:"Система и масштаб", sections:[
+    {title:"Стандартизация процессов", tasks:["Сделать SOP по outreach","Сделать SOP по продакшену контента","Сделать SOP по рекламным интеграциям","Сделать SOP по аналитике и отчетам"]},
+    {title:"Делегирование", tasks:["Нанять ассистента на трекинг outreach","Нанять монтажера под адаптацию контента","Нанять brand manager после стабильного дохода"]},
+    {title:"Масштабирование", tasks:["Перейти от разовых сделок к bundle-пакетам","Перейти от bundle к monthly retainers","Перейти от retainers к ambassador-контрактам","Запустить свой цифровой продукт или консультации"]}
+  ]},
+  {id:9, title:"Уровни успеха", sections:[
+    {title:"Stage 1 · $1K–$3K/мес", tasks:["Первые brand deals","Первые affiliate-комиссии"]},
+    {title:"Stage 2 · $5K–$10K/мес", tasks:["2-3 постоянных бренда","Еженедельные входящие запросы"]},
+    {title:"Stage 3 · $15K–$30K/мес", tasks:["Ежемесячные brand retainers","Масштабные performance-сделки"]},
+    {title:"Stage 4 · $30K+/мес", tasks:["Ambassador-контракты","Мультиплатформенный creator business","Свои продукты или агентское направление"]}
+  ]},
+  {id:10, title:"План на 90 дней", sections:[
+    {title:"Дни 1–7", tasks:["Доделать media kit","Обновить Instagram bio","Создать rate card","Собрать link-in-bio страницу","Подключить 3 affiliate-программы","Создать CRM-таблицу"]},
+    {title:"Дни 8–14", tasks:["Податься в Linqia","Податься в Open Influence","Податься в Performance Collab","Податься в Impact и ShareASale","Собрать список первых 50 брендов"]},
+    {title:"Дни 15–30", tasks:["Отправить первые 30 outreach-email","Опубликовать 4 viral reels","Опубликовать 2 trust reels","Опубликовать 1 monetization reel","Протестировать CTA в stories"]},
+    {title:"Дни 31–60", tasks:["Сделать follow-up по брендам","Закрыть первую платную интеграцию","Собрать первый case study","Увеличить объем outreach","Улучшить лучшую affiliate-воронку"]},
+    {title:"Дни 61–90", tasks:["Закрыть 3-5 brand deals","Поднять ставки","Начать продавать bundle-пакеты","Питчить monthly ambassador deals","Собрать повторяемую систему монетизации"]}
+  ]},
+  {id:11, title:"Главный принцип", sections:[
+    {title:"Формула успеха", tasks:["Просмотры сами по себе не являются конечной целью","Контент создает охват","Охват создает доверие","Доверие создает клики","Клики создают выручку","Выручка дает масштаб","Масштаб приводит к долгосрочному успеху"]}
+  ]}
+];
+
+const STAGES = [
+  {min:0,   cls:'s0', icon:'🚀', text:'Начало пути'},
+  {min:10,  cls:'s1', icon:'💡', text:'Stage 1 · Первые шаги'},
+  {min:30,  cls:'s1', icon:'📈', text:'Stage 1 · Разгон'},
+  {min:50,  cls:'s2', icon:'⚡', text:'Stage 2 · Набираем обороты'},
+  {min:70,  cls:'s2', icon:'🔥', text:'Stage 2 · Горячий старт'},
+  {min:85,  cls:'s3', icon:'💰', text:'Stage 3 · Система работает'},
+  {min:100, cls:'s4', icon:'🏆', text:'Финал · Всё достигнуто!'},
+];
+
+let state = JSON.parse(localStorage.getItem('roadmap_state') || '{}');
+let totalTasks = 0;
+
+function getKey(cid, si, ti){ return `${cid}_${si}_${ti}`; }
+
+function buildUI(){
+  const container = document.getElementById('chapters');
+  container.innerHTML = '';
+  totalTasks = 0;
+
+  data.forEach((ch, ci) => {
+    let chTotal = 0, chDone = 0;
+    ch.sections.forEach(s => { chTotal += s.tasks.length; totalTasks += s.tasks.length; });
+
+    const div = document.createElement('div');
+    div.className = 'chapter';
+    div.id = 'ch' + ch.id;
+
+    // count done
+    ch.sections.forEach((s, si) => s.tasks.forEach((_, ti) => {
+      if(state[getKey(ch.id, si, ti)]) chDone++;
+    }));
+
+    const pct = chTotal ? Math.round(chDone/chTotal*100) : 0;
+    const allDone = chDone === chTotal;
+
+    div.innerHTML = `
+      <div class="chapter-header${allDone?' all-done':''}" onclick="toggleChapter(${ci})">
+        <div class="chapter-num${allDone?' done-num':''}">${ch.id}</div>
+        <div class="chapter-title">${ch.title}</div>
+        <span class="chapter-prog">${chDone}/${chTotal}</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-bar"><div class="chapter-bar-fill" style="width:${pct}%"></div></div>
+      <div class="chapter-body" id="body${ci}">
+        ${ch.sections.map((s, si) => `
+          <div class="section">
+            <div class="section-title">${s.title}</div>
+            ${s.tasks.map((t, ti) => {
+              const key = getKey(ch.id, si, ti);
+              const done = !!state[key];
+              return `<div class="task${done?' done':''}" id="t_${key}" onclick="toggleTask('${key}')">
+                <div class="task-cb"><span class="check">✓</span></div>
+                <div class="task-label">${t}</div>
+              </div>`;
+            }).join('')}
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  updateProgress();
+}
+
+function toggleChapter(ci){
+  const body = document.getElementById('body'+ci);
+  const ch = body.closest('.chapter');
+  ch.classList.toggle('open');
+}
+
+function toggleTask(key){
+  state[key] = !state[key];
+  localStorage.setItem('roadmap_state', JSON.stringify(state));
+
+  const el = document.getElementById('t_' + key);
+  if(!el) return;
+  el.classList.toggle('done', state[key]);
+
+  // update chapter header counts
+  buildUI();
+  // re-open same chapter
+  const parts = key.split('_');
+  const chId = parseInt(parts[0]);
+  const ci = data.findIndex(c => c.id === chId);
+  if(ci >= 0){
+    const ch = document.getElementById('ch' + chId);
+    if(ch){ ch.classList.add('open'); }
+  }
+
+  if(state[key]) maybeConfetti();
+}
+
+function updateProgress(){
+  const done = Object.values(state).filter(Boolean).length;
+  const pct = totalTasks ? Math.round(done/totalTasks*100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = pct + '%';
+  document.getElementById('prog-count').textContent = done + ' / ' + totalTasks;
+
+  const badge = document.getElementById('stage-badge');
+  let stage = STAGES[0];
+  for(const s of STAGES) if(pct >= s.min) stage = s;
+  badge.className = 'stage-badge ' + stage.cls;
+  badge.textContent = stage.icon + ' ' + stage.text;
+
+  const fc = document.getElementById('final-card');
+  if(pct === 100){
+    fc.classList.add('show');
+    fc.scrollIntoView({behavior:'smooth', block:'center'});
+  } else {
+    fc.classList.remove('show');
+  }
+}
+
+function maybeConfetti(){
+  const pct = Object.values(state).filter(Boolean).length / totalTasks * 100;
+  if(pct % 10 < 1.5 || pct >= 100) spawnConfetti();
+}
+
+function spawnConfetti(){
+  const wrap = document.getElementById('confetti');
+  const colors = ['#4f8ef7','#8b5cf6','#34d399','#f472b6','#fbbf24'];
+  for(let i=0;i<40;i++){
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.style.cssText = `
+      left:${Math.random()*100}vw;
+      top:-10px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${4+Math.random()*6}px;
+      height:${4+Math.random()*6}px;
+      animation-duration:${1.5+Math.random()*2}s;
+      animation-delay:${Math.random()*.5}s;
+      opacity:${0.6+Math.random()*.4};
+    `;
+    wrap.appendChild(d);
+    setTimeout(()=>d.remove(), 4000);
+  }
+}
+
+function resetAll(){
+  if(!confirm('Сбросить весь прогресс?')) return;
+  state = {};
+  localStorage.removeItem('roadmap_state');
+  buildUI();
+}
+
+buildUI();
+// open chapter 10 (90-day plan) by default if nothing done yet
+const doneCount = Object.values(state).filter(Boolean).length;
+if(doneCount === 0){
+  const ch10 = document.getElementById('ch10');
+  if(ch10) ch10.classList.add('open');
+}
+</script>
+</body>
+</html>
