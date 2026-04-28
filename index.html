@@ -2926,107 +2926,64 @@
     document.addEventListener("DOMContentLoaded", () => {
       const track = document.getElementById('dynamic-gallery');
       const videoGrid = document.getElementById('dynamic-gallery-video');
-      const marqueeContainer = document.getElementById('marquee-container');
-      const tabMain = document.getElementById('tab-main');
-      const tabVideo = document.getElementById('tab-video');
       
       if (!track || !videoGrid) return;
 
-      let foundMain = [];
-      let foundVideo = [];
-      let pendingCount = 0;
+      // Filter and shuffle data immediately
+      const photos = galleryImages.filter(i => i.type === 'image');
+      const videos = galleryImages.filter(i => i.type === 'video');
 
-      if (typeof galleryImages !== 'undefined' && galleryImages.length > 0) {
-        galleryImages.forEach(item => {
-          pendingCount++;
-          if (item.type === 'image') {
-            const img = new Image();
-            img.onload = () => {
-              const data = { src: item.src, type: item.type, w: img.naturalWidth, h: img.naturalHeight };
-              if (item.folder === 'video') foundVideo.push(data); else foundMain.push(data);
-              checkFinished();
-            };
-            img.onerror = () => checkFinished();
-            img.src = item.src;
-          } else {
-            const vid = document.createElement('video');
-            vid.onloadedmetadata = () => {
-              const data = { src: item.src, type: item.type, w: vid.videoWidth, h: vid.videoHeight };
-              if (item.folder === 'video') foundVideo.push(data); else foundMain.push(data);
-              checkFinished();
-            };
-            vid.onerror = () => checkFinished();
-            vid.src = item.src;
-          }
-        });
-      }
-
-      let timeoutStarted = false;
-      function checkFinished() {
-        pendingCount--;
-        if ((foundMain.length > 0 || foundVideo.length > 0) && !timeoutStarted) {
-          timeoutStarted = true;
-          setTimeout(renderAll, 800); 
-        }
-      }
-
-      function renderAll() {
-        renderMarquee();
-        renderVideoGrid();
-      }
-
-      function renderMarquee() {
-        if (foundMain.length === 0) return;
-        const shuffled = [...foundMain].sort(() => Math.random() - 0.5);
+      function renderPhotos() {
         track.innerHTML = '';
+        const shuffled = [...photos].sort(() => Math.random() - 0.5);
         const itemHeight = window.innerWidth <= 768 ? 320 : 480;
 
         const createEl = (item) => {
           const div = document.createElement('div');
           div.className = 'g-item';
-          const ratio = item.w / item.h;
-          div.style.width = (itemHeight * ratio) + 'px';
-          if (item.type === 'image') {
-            const elImg = document.createElement('img');
-            elImg.src = item.src; 
-            elImg.loading = 'lazy';
-            elImg.decoding = 'async';
-            div.appendChild(elImg);
-          } else {
-            const elVid = document.createElement('video');
-            elVid.src = item.src; elVid.autoplay = true; elVid.loop = true; elVid.muted = true; elVid.playsInline = true;
-            div.appendChild(elVid);
-          }
+          div.style.width = (itemHeight * 0.7) + 'px'; // Default width until loaded
+
+          const elImg = document.createElement('img');
+          elImg.src = item.src; 
+          elImg.loading = 'lazy';
+          elImg.onload = () => {
+             const ratio = elImg.naturalWidth / elImg.naturalHeight;
+             div.style.width = (itemHeight * ratio) + 'px';
+          };
+          div.appendChild(elImg);
           return div;
         };
 
         shuffled.forEach(item => track.appendChild(createEl(item)));
+        // Duplicate for seamless scroll
         shuffled.forEach(item => track.appendChild(createEl(item)));
       }
 
-      function renderVideoGrid() {
+      function renderVideos() {
         const tracks = [document.getElementById('v-track-1'), document.getElementById('v-track-2'), document.getElementById('v-track-3')];
         tracks.forEach(t => { if(t) t.innerHTML = ''; });
-        const items = foundVideo.length > 0 ? foundVideo : foundMain.filter(i => i.type === 'video');
-        const shuffled = [...items].sort(() => Math.random() - 0.5);
+        
+        const shuffled = [...videos].sort(() => Math.random() - 0.5);
         const itemH = window.innerWidth <= 768 ? 200 : 280;
-        const fmt = s => { const m = Math.floor(s/60), sec = Math.floor(s%60); return `${m}:${sec<10?'0':''}${sec}`; };
+        const fmt = s => { 
+          if (!s) return '0:00';
+          const m = Math.floor(s/60), sec = Math.floor(s%60); 
+          return `${m}:${sec<10?'0':''}${sec}`; 
+        };
 
         const createVItem = (item) => {
           const div = document.createElement('div');
           div.className = 'v-item';
-          const ratio = (item.w && item.h) ? item.w / item.h : 16/9;
-          div.style.width = (itemH * ratio) + 'px';
+          div.style.width = (itemH * 0.56) + 'px'; // Default 9:16 ratio for videos
 
           const vid = document.createElement('video');
           vid.src = item.src;
-          vid.autoplay = true;
-          vid.muted = true; vid.loop = true; vid.playsInline = true;
+          vid.autoplay = true; vid.muted = true; vid.loop = true; vid.playsInline = true;
           vid.preload = 'metadata';
 
           const badge = document.createElement('div');
           badge.className = 'v-duration-badge';
-          badge.textContent = '0:00';
+          badge.textContent = '...';
 
           const hint = document.createElement('div');
           hint.className = 'v-play-hint';
@@ -3038,29 +2995,15 @@
 
           vid.addEventListener('loadedmetadata', () => {
             badge.textContent = fmt(vid.duration);
-            if (vid.videoWidth && vid.videoHeight) {
-              const r = vid.videoWidth / vid.videoHeight;
-              div.style.width = (itemH * r) + 'px';
-            }
+            const r = vid.videoWidth / vid.videoHeight;
+            div.style.width = (itemH * r) + 'px';
           });
-
-          div.addEventListener('mouseenter', () => { /* Play hint or other effects */ });
-          div.addEventListener('mouseleave', () => { /* No pause, keep playing */ });
 
           div.addEventListener('click', () => {
             const lbx = document.getElementById('v-lbx');
             const lbxVid = document.getElementById('v-lbx-video');
-            const lbxContent = lbx ? lbx.querySelector('.v-lbx-content') : null;
-            if (lbx && lbxVid && lbxContent) {
+            if (lbx && lbxVid) {
               lbxVid.src = item.src;
-              
-              // Set ratio for lightbox
-              const r = (item.w && item.h) ? item.w / item.h : 16/9;
-              let ratioType = 'landscape';
-              if (r < 0.8) ratioType = 'portrait';
-              else if (Math.abs(r - 1) < 0.2) ratioType = 'square';
-              
-              lbxContent.setAttribute('data-lbx-ratio', ratioType);
               lbx.classList.add('open');
               document.body.style.overflow = 'hidden';
               lbxVid.play();
@@ -3070,24 +3013,32 @@
           return div;
         };
 
-        const portraits = shuffled.filter(item => item.w && item.h && (item.w / item.h) < 0.8);
-        const others = shuffled.filter(item => !item.w || !item.h || (item.w / item.h) >= 0.8);
-
-        // Track 1: Only 9:16 (Portrait) videos
-        portraits.forEach(item => { if (tracks[0]) tracks[0].appendChild(createVItem(item)); });
-        portraits.forEach(item => { if (tracks[0]) tracks[0].appendChild(createVItem(item)); });
-
-        // Tracks 2 & 3: Other formats
-        others.forEach((item, i) => {
-          const track = tracks[(i % 2) + 1];
-          if (track) track.appendChild(createVItem(item));
+        // Split into rows: Portrait (row 1), Others (row 2-3)
+        shuffled.forEach((item, i) => {
+          const targetTrack = (i % 3); 
+          if (tracks[targetTrack]) tracks[targetTrack].appendChild(createVItem(item));
         });
-        others.forEach((item, i) => {
-          const track = tracks[(i % 2) + 1];
-          if (track) track.appendChild(createVItem(item));
+        // Duplicate for seamless scroll
+        shuffled.forEach((item, i) => {
+          const targetTrack = (i % 3); 
+          if (tracks[targetTrack]) tracks[targetTrack].appendChild(createVItem(item));
         });
       }
+
+      renderPhotos();
+      renderVideos();
     });
+
+    function closeVideoLbx() {
+      const lbx = document.getElementById('v-lbx');
+      const lbxVid = document.getElementById('v-lbx-video');
+      if (lbx && lbxVid) {
+        lbx.classList.remove('open');
+        lbxVid.pause();
+        lbxVid.src = '';
+        document.body.style.overflow = '';
+      }
+    }
   </script>
   <div class="div"></div>
 
